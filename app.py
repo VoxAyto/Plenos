@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET"])
 def index():
-   conn = sqlite3.connect("iniciativas_pleno.db")
+    conn = sqlite3.connect("iniciativas_pleno_limpia.db")
     conn.row_factory = sqlite3.Row
 
     grupo = request.args.get("grupo", "")
