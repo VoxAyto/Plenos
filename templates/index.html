@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Buscador de Iniciativas</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <title>Buscador de Iniciativas del Pleno de Alicante</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <h1>Buscador de Iniciativas del Pleno de Alicante</h1>
@@ -11,39 +13,48 @@
         <select name="grupo">
             <option value="">-- Grupo político --</option>
             {% for g in grupos %}
-                <option value="{{ g }}" {% if request.args.get('grupo') == g %}selected{% endif %}>{{ g }}</option>
+                <option value="{{ g }}">{{ g }}</option>
             {% endfor %}
         </select>
-        <input type="text" name="titulo" placeholder="Palabra clave en el título" value="{{ request.args.get('titulo', '') }}">
+
+        <input type="text" name="titulo" placeholder="Palabra clave en el título">
+
         <select name="resultado">
             <option value="">-- Resultado --</option>
-            {% for r in resultados_list %}
-                <option value="{{ r }}" {% if request.args.get('resultado') == r %}selected{% endif %}>{{ r }}</option>
+            {% for r in resultados_opciones %}
+                <option value="{{ r }}">{{ r }}</option>
             {% endfor %}
         </select>
+
         <select name="fecha">
             <option value="">-- Fecha del Pleno --</option>
             {% for f in fechas %}
-                <option value="{{ f }}" {% if request.args.get('fecha') == f %}selected{% endif %}>{{ f }}</option>
+                <option value="{{ f }}">{{ f }}</option>
             {% endfor %}
         </select>
+
         <button type="submit">Buscar</button>
     </form>
+
     <table>
-        <tr>
-            <th>Fecha</th>
-            <th>Grupo</th>
-            <th>Contenido</th>
-            <th>Resultado</th>
-        </tr>
-        {% for row in resultados %}
-        <tr>
-            <td>{{ row["fecha"] }}</td>
-            <td>{{ row["grupo"] }}</td>
-            <td>{{ row["contenido"] }}</td>
-            <td>{{ row["resultado"] }}</td>
-        </tr>
-        {% endfor %}
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Grupo</th>
+                <th>Contenido</th>
+                <th>Resultado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in resultados %}
+                <tr>
+                    <td>{{ row['fecha'] }}</td>
+                    <td>{{ row['grupo'] }}</td>
+                    <td>{{ row['contenido'] }}</td>
+                    <td>{{ row['resultado'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </body>
 </html>
