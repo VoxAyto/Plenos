@@ -1,45 +1,49 @@
+
 from flask import Flask, render_template, request
 import sqlite3
 
 app = Flask(__name__)
 
-@app.route("/", methods=["GET"])
+@app.route('/', methods=['GET'])
 def index():
-    conn = sqlite3.connect("iniciativas_pleno_final.db")
+    conn = sqlite3.connect('iniciativas_pleno_final.db')
     conn.row_factory = sqlite3.Row
 
-    grupos = ['VOX', 'PP', 'PSOE', 'COMPROMIS', 'PODEMOS']
-    resultados = ['Aprobada', 'Rechazada', 'Retirada']
-    fechas = [str(a) for a in range(2019, 2026)]
+    grupos = ["VOX", "PP", "PSOE", "COMPROMIS", "PODEMOS", "CIUDADANOS"]
+    resultados = ["APROBADO", "RECHAZADO", "RETIRADO"]
+    fechas = [row["fecha"] for row in conn.execute("SELECT DISTINCT fecha FROM iniciativas ORDER BY fecha DESC").fetchall()]
+    concejales_vox = ["", "MARIO", "PEPE", "CARMEN", "JUAN", "OSCAR"]
 
-    query = "SELECT * FROM iniciativas WHERE 1=1"
+    grupo = request.args.get('grupo', '')
+    palabra_clave = request.args.get('palabra_clave', '')
+    resultado = request.args.get('resultado', '')
+    fecha = request.args.get('fecha', '')
+    concejal = request.args.get('concejal', '')
+
+    query = "SELECT fecha, grupo, contenido, resultado, concejal FROM iniciativas WHERE 1=1"
     params = []
 
-    grupo = request.args.get("grupo")
     if grupo:
         query += " AND grupo = ?"
         params.append(grupo)
-
-    titulo = request.args.get("titulo")
-    if titulo:
+    if palabra_clave:
         query += " AND contenido LIKE ?"
-        params.append(f"%{titulo}%")
-
-    resultado = request.args.get("resultado")
+        params.append(f"%{palabra_clave}%")
     if resultado:
         query += " AND resultado = ?"
         params.append(resultado)
-
-    fecha = request.args.get("fecha")
     if fecha:
-        query += " AND fecha LIKE ?"
-        params.append(f"{fecha}-%")
+        query += " AND fecha = ?"
+        params.append(fecha)
+    if grupo == "VOX" and concejal:
+        query += " AND concejal = ?"
+        params.append(concejal)
 
     resultados_query = conn.execute(query, params).fetchall()
-    conn.close()
+    return render_template('index.html', resultados=resultados_query, grupos=grupos,
+                           resultados_filtro=resultados, fechas=fechas, grupo=grupo,
+                           palabra_clave=palabra_clave, resultado=resultado, fecha=fecha,
+                           concejales=concejales_vox, concejal=concejal)
 
-    return render_template("index.html",
-                           resultados=resultados_query,
-                           grupos=grupos,
-                           resultados_filtro=resultados,
-                           fechas=fechas)
+if __name__ == '__main__':
+    app.run(debug=True)
