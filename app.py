@@ -16,20 +16,18 @@ def index():
 
     conn = get_db_connection()
 
-    # Obtener valores únicos para desplegables
-    grupos = [row[0] for row in conn.execute("SELECT DISTINCT grupo FROM iniciativas ORDER BY grupo")]
-    resultados = [row[0] for row in conn.execute("SELECT DISTINCT resultado FROM iniciativas ORDER BY resultado")]
-    fechas = [row[0] for row in conn.execute("SELECT DISTINCT fecha FROM iniciativas ORDER BY fecha DESC")]
+    grupos = [row[0] for row in conn.execute("SELECT DISTINCT grupo FROM iniciativas WHERE grupo IS NOT NULL ORDER BY grupo")]
+    resultados_opciones = [row[0] for row in conn.execute("SELECT DISTINCT resultado FROM iniciativas WHERE resultado IS NOT NULL ORDER BY resultado")]
+    fechas = [row[0] for row in conn.execute("SELECT DISTINCT fecha FROM iniciativas WHERE fecha IS NOT NULL ORDER BY fecha DESC")]
 
-    # Construir consulta dinámica
-    query = "SELECT fecha, grupo, titulo, resultado, archivo FROM iniciativas WHERE 1=1"
+    query = "SELECT fecha, grupo, contenido, resultado, archivo_pdf FROM iniciativas WHERE 1=1"
     params = []
 
     if grupo:
         query += " AND grupo = ?"
         params.append(grupo)
     if titulo:
-        query += " AND titulo LIKE ?"
+        query += " AND contenido LIKE ?"
         params.append(f"%{titulo}%")
     if resultado:
         query += " AND resultado = ?"
@@ -38,13 +36,14 @@ def index():
         query += " AND fecha = ?"
         params.append(fecha)
 
-    resultados_query = conn.execute(query, params).fetchall()
+    resultados = conn.execute(query, params).fetchall()
     conn.close()
-return render_template('index.html',
-                       resultados=resultados_query,
-                       grupos=grupos,
-                       opciones_resultado=resultados,
-                       fechas=fechas)
+
+    return render_template('index.html',
+                           resultados=resultados,
+                           grupos=grupos,
+                           opciones_resultado=resultados_opciones,
+                           fechas=fechas)
 
 if __name__ == '__main__':
     app.run(debug=True)
