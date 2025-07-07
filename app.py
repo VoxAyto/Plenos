@@ -3,22 +3,15 @@ import sqlite3
 
 app = Flask(__name__)
 
-def get_db_connection():
-    conn = sqlite3.connect('iniciativas_pleno.db')
-    return conn
-
-@app.route('/')
+@app.route("/", methods=["GET"])
 def index():
-    grupo = request.args.get('grupo', '').strip()
-    titulo = request.args.get('titulo', '').strip()
-    resultado = request.args.get('resultado', '').strip()
-    fecha = request.args.get('fecha', '').strip()
+    conn = sqlite3.connect("iniciativas_pleno_limpia.db")
+    conn.row_factory = sqlite3.Row
 
-    conn = get_db_connection()
-
-    grupos = ["VOX", "PP", "PSOE", "COMPROMIS", "PODEMOS"]
-    resultados_opciones = [row[0] for row in conn.execute("SELECT DISTINCT resultado FROM iniciativas WHERE resultado IS NOT NULL ORDER BY resultado")]
-    fechas = [row[0] for row in conn.execute("SELECT DISTINCT fecha FROM iniciativas WHERE fecha IS NOT NULL ORDER BY fecha DESC")]
+    grupo = request.args.get("grupo", "")
+    titulo = request.args.get("titulo", "")
+    resultado = request.args.get("resultado", "")
+    fecha = request.args.get("fecha", "")
 
     query = "SELECT fecha, grupo, contenido, resultado FROM iniciativas WHERE 1=1"
     params = []
@@ -37,13 +30,11 @@ def index():
         params.append(fecha)
 
     resultados = conn.execute(query, params).fetchall()
+
+    grupos = [row[0] for row in conn.execute("SELECT DISTINCT grupo FROM iniciativas ORDER BY grupo")]
+    resultados_list = [row[0] for row in conn.execute("SELECT DISTINCT resultado FROM iniciativas ORDER BY resultado")]
+    fechas = [row[0] for row in conn.execute("SELECT DISTINCT fecha FROM iniciativas ORDER BY fecha DESC")]
     conn.close()
 
-    return render_template('index.html',
-                           resultados=resultados,
-                           grupos=grupos,
-                           opciones_resultado=resultados_opciones,
-                           fechas=fechas)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    return render_template("index.html", resultados=resultados,
+                           grupos=grupos, resultados_list=resultados_list, fechas=fechas)
