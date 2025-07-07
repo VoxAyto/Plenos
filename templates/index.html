@@ -2,83 +2,19 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscador de Iniciativas del Pleno de Alicante</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background: linear-gradient(90deg, #aa151b 0%, #f1bf00 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        header img {
-            vertical-align: middle;
-            height: 24px;
-            margin-left: 10px;
-        }
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            padding: 20px;
-        }
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .filters select, .filters input {
-            flex: 1 1 150px;
-            padding: 10px;
-            font-size: 1em;
-        }
-        .filters button {
-            background: #aa151b;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            vertical-align: top;
-        }
-        th {
-            background: #f1bf00;
-            text-align: left;
-        }
-        @media (max-width: 600px) {
-            .filters {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <header>
-        <h1>Buscador de Iniciativas del Pleno de Alicante <img src="https://flagcdn.com/es.svg" alt="Bandera de España"></h1>
+        <h1>Buscador de Iniciativas del Pleno de Alicante <img src="https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg" alt="Bandera de España" class="bandera"></h1>
     </header>
-
-    <div class="container">
-        <form class="filters" method="get">
-            <select name="grupo">
+    <main>
+        <form method="get">
+            <select name="grupo" id="grupo" onchange="toggleConcejal()">
                 <option value="">-- Grupo político --</option>
                 {% for g in grupos %}
-                    <option value="{{ g }}" {% if grupo == g %}selected{% endif %}>{{ g }}</option>
+                <option value="{{ g }}" {% if g == grupo %}selected{% endif %}>{{ g }}</option>
                 {% endfor %}
             </select>
 
@@ -87,25 +23,22 @@
             <select name="resultado">
                 <option value="">-- Resultado --</option>
                 {% for r in resultados_filtro %}
-                    <option value="{{ r }}" {% if resultado == r %}selected{% endif %}>{{ r }}</option>
+                <option value="{{ r }}" {% if r == resultado %}selected{% endif %}>{{ r }}</option>
                 {% endfor %}
             </select>
 
             <select name="fecha">
                 <option value="">-- Fecha del Pleno --</option>
                 {% for f in fechas %}
-                    <option value="{{ f }}" {% if fecha == f %}selected{% endif %}>{{ f }}</option>
+                <option value="{{ f }}" {% if f == fecha %}selected{% endif %}>{{ f }}</option>
                 {% endfor %}
             </select>
 
-            {% if grupo == "VOX" %}
-                <select name="concejal">
-                    <option value="">-- Concejal --</option>
-                    {% for c in concejales %}
-                        <option value="{{ c }}" {% if concejal == c %}selected{% endif %}>{{ c }}</option>
-                    {% endfor %}
-                </select>
-            {% endif %}
+            <select name="concejal" id="concejal" style="display:none;">
+                {% for c in concejales %}
+                <option value="{{ c }}" {% if c == concejal %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
 
             <button type="submit">Buscar</button>
         </form>
@@ -121,23 +54,26 @@
                 </tr>
             </thead>
             <tbody>
-                {% for row in resultados %}
-                    <tr>
-                        <td>{{ row['fecha'] }}</td>
-                        <td>{{ row['grupo'] }}</td>
-                        <td style="max-width: 400px; white-space: pre-line; overflow-wrap: break-word;">{{ row['contenido'] }}</td>
-                        <td>{{ row['resultado'] }}</td>
-                        <td>{{ row['concejal'] }}</td>
-                    </tr>
+                {% for r in resultados %}
+                <tr>
+                    <td>{{ r["fecha"] }}</td>
+                    <td>{{ r["grupo"] }}</td>
+                    <td class="contenido">{{ r["contenido"] }}</td>
+                    <td>{{ r["resultado"] }}</td>
+                    <td>{{ r["concejal"] or '' }}</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-</body>
-</html>
+    </main>
 
-}
-window.onload = toggleConcejal;
-</script>
+    <script>
+        function toggleConcejal() {
+            const grupo = document.getElementById("grupo").value;
+            const concejalSelect = document.getElementById("concejal");
+            concejalSelect.style.display = (grupo === "VOX") ? "inline-block" : "none";
+        }
+        window.onload = toggleConcejal;
+    </script>
 </body>
 </html>
