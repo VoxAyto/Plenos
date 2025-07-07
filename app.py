@@ -3,52 +3,43 @@ import sqlite3
 
 app = Flask(__name__)
 
-def get_db_connection():
-    conn = sqlite3.connect('iniciativas_pleno_final.db')
-    conn.row_factory = sqlite3.Row
-    return conn
-
-@app.route('/', methods=['GET'])
+@app.route("/", methods=["GET"])
 def index():
-    conn = get_db_connection()
+    conn = sqlite3.connect("iniciativas_pleno_final.db")
+    conn.row_factory = sqlite3.Row
 
-    # Obtener opciones filtradas y limpias
-    grupos = [row["grupo"] for row in conn.execute(
-        "SELECT DISTINCT grupo FROM iniciativas WHERE grupo IN ('VOX', 'PP', 'PSOE', 'COMPROMIS', 'PODEMOS')").fetchall()]
+    grupos = ['VOX', 'PP', 'PSOE', 'COMPROMIS', 'PODEMOS']
+    resultados = ['Aprobada', 'Rechazada', 'Retirada']
+    fechas = [str(a) for a in range(2019, 2026)]
 
-    resultados = [row["resultado"] for row in conn.execute(
-        "SELECT DISTINCT resultado FROM iniciativas WHERE resultado != ''").fetchall()]
+    query = "SELECT * FROM iniciativas WHERE 1=1"
+    params = []
 
-    fechas = sorted(set(row["fecha"][:4] for row in conn.execute(
-        "SELECT DISTINCT fecha FROM iniciativas WHERE fecha LIKE '20%'").fetchall()))
-
-    # Filtrado de resultados
-    grupo = request.args.get('grupo', '')
-    titulo = request.args.get('titulo', '')
-    resultado = request.args.get('resultado', '')
-    fecha = request.args.get('fecha', '')
-
-    query = "SELECT fecha, grupo, contenido, resultado FROM iniciativas WHERE 1=1"
-    params = {}
-
+    grupo = request.args.get("grupo")
     if grupo:
-        query += " AND grupo = :grupo"
-        params["grupo"] = grupo
-    if titulo:
-        query += " AND contenido LIKE :titulo"
-        params["titulo"] = f"%{titulo}%"
-    if resultado:
-        query += " AND resultado = :resultado"
-        params["resultado"] = resultado
-    if fecha:
-        query += " AND fecha LIKE :fecha"
-        params["fecha"] = f"{fecha}%"
+        query += " AND grupo = ?"
+        params.append(grupo)
 
-    resultados = conn.execute(query, params).fetchall()
+    titulo = request.args.get("titulo")
+    if titulo:
+        query += " AND contenido LIKE ?"
+        params.append(f"%{titulo}%")
+
+    resultado = request.args.get("resultado")
+    if resultado:
+        query += " AND resultado = ?"
+        params.append(resultado)
+
+    fecha = request.args.get("fecha")
+    if fecha:
+        query += " AND fecha LIKE ?"
+        params.append(f"{fecha}-%")
+
+    resultados_query = conn.execute(query, params).fetchall()
     conn.close()
 
-    return render_template('index.html',
-                           resultados=resultados,
+    return render_template("index.html",
+                           resultados=resultados_query,
                            grupos=grupos,
-                           resultados_opciones=resultados,
+                           resultados_filtro=resultados,
                            fechas=fechas)
