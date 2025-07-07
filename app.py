@@ -1,13 +1,24 @@
+
 from flask import Flask, render_template, request
 import sqlite3
 
 app = Flask(__name__)
 
+def get_db_connection():
+    conn = sqlite3.connect('iniciativas_pleno.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
 @app.route("/", methods=["GET"])
 def index():
-    conn = sqlite3.connect("iniciativas_pleno_limpia.db")
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
+    
+    # Obtener valores únicos para desplegables
+    grupos = [row["grupo"] for row in conn.execute("SELECT DISTINCT grupo FROM iniciativas WHERE grupo != ''").fetchall()]
+    fechas = [row["fecha"] for row in conn.execute("SELECT DISTINCT fecha FROM iniciativas WHERE fecha != ''").fetchall()]
+    resultados_opciones = [row["resultado"] for row in conn.execute("SELECT DISTINCT resultado FROM iniciativas WHERE resultado != ''").fetchall()]
 
+    # Parámetros de búsqueda
     grupo = request.args.get("grupo", "")
     titulo = request.args.get("titulo", "")
     resultado = request.args.get("resultado", "")
@@ -17,24 +28,23 @@ def index():
     params = []
 
     if grupo:
-        query += " AND grupo = ?"
-        params.append(grupo)
+        query += " AND grupo LIKE ?"
+        params.append(f"%{grupo}%")
     if titulo:
         query += " AND contenido LIKE ?"
         params.append(f"%{titulo}%")
     if resultado:
-        query += " AND resultado = ?"
-        params.append(resultado)
+        query += " AND resultado LIKE ?"
+        params.append(f"%{resultado}%")
     if fecha:
         query += " AND fecha = ?"
         params.append(fecha)
 
     resultados = conn.execute(query, params).fetchall()
-
-    grupos = [row[0] for row in conn.execute("SELECT DISTINCT grupo FROM iniciativas ORDER BY grupo")]
-    resultados_list = [row[0] for row in conn.execute("SELECT DISTINCT resultado FROM iniciativas ORDER BY resultado")]
-    fechas = [row[0] for row in conn.execute("SELECT DISTINCT fecha FROM iniciativas ORDER BY fecha DESC")]
     conn.close()
 
-    return render_template("index.html", resultados=resultados,
-                           grupos=grupos, resultados_list=resultados_list, fechas=fechas)
+    return render_template("index.html",
+                           resultados=resultados,
+                           grupos=grupos,
+                           fechas=fechas,
+                           resultados_opciones=resultados_opciones)
