@@ -19,7 +19,7 @@
 
         <select name="resultado">
             <option value="">-- Resultado --</option>
-            {% for r in resultados %}
+            {% for r in opciones_resultado %}
                 <option value="{{ r }}" {% if r == request.args.get('resultado') %}selected{% endif %}>{{ r }}</option>
             {% endfor %}
         </select>
