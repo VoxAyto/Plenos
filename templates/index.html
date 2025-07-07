@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Iniciativas del Pleno</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Buscador de Iniciativas del Pleno de Alicante</h1>
+    <form method="get">
+        <input type="text" name="grupo" placeholder="Grupo político" value="{{ request.args.get('grupo', '') }}">
+        <input type="text" name="titulo" placeholder="Título de la iniciativa" value="{{ request.args.get('titulo', '') }}">
+        <input type="text" name="resultado" placeholder="Resultado (Aprobada, Rechazada...)" value="{{ request.args.get('resultado', '') }}">
+        <input type="text" name="fecha" placeholder="Fecha (AAAA-MM-DD)" value="{{ request.args.get('fecha', '') }}">
+        <button type="submit">Buscar</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Grupo</th>
+                <th>Contenido</th>
+                <th>Resultado</th>
+                <th>Archivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ini in iniciativas %}
+            <tr>
+                <td>{{ ini['fecha'] }}</td>
+                <td>{{ ini['grupo'] }}</td>
+                <td>{{ ini['contenido'] }}</td>
+                <td>{{ ini['resultado'] }}</td>
+                <td>{{ ini['archivo_pdf'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
