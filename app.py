@@ -40,12 +40,11 @@ def index():
 
     resultados_query = conn.execute(query, params).fetchall()
     conn.close()
-
-    return render_template('index.html',
-                           resultados=resultados_query,
-                           grupos=grupos,
-                           resultados=resultados,
-                           fechas=fechas)
+return render_template('index.html',
+                       resultados=resultados_query,
+                       grupos=grupos,
+                       opciones_resultado=resultados,
+                       fechas=fechas)
 
 if __name__ == '__main__':
     app.run(debug=True)
