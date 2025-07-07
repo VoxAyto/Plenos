@@ -13,11 +13,13 @@ def get_db_connection():
 def index():
     conn = get_db_connection()
     
-    # Obtener valores únicos para desplegables
-    grupos = [row["grupo"] for row in conn.execute("SELECT DISTINCT grupo FROM iniciativas WHERE grupo != ''").fetchall()]
-    fechas = [row["fecha"] for row in conn.execute("SELECT DISTINCT fecha FROM iniciativas WHERE fecha != ''").fetchall()]
-    resultados_opciones = [row["resultado"] for row in conn.execute("SELECT DISTINCT resultado FROM iniciativas WHERE resultado != ''").fetchall()]
-
+    # Obtener opciones únicas para los desplegables
+grupos = [row["grupo"] for row in conn.execute(
+    "SELECT DISTINCT grupo FROM iniciativas WHERE grupo IN ('VOX', 'PP', 'PSOE', 'COMPROMIS', 'PODEMOS')").fetchall()]
+resultados = [row["resultado"] for row in conn.execute(
+    "SELECT DISTINCT resultado FROM iniciativas WHERE resultado != ''").fetchall()]
+fechas = sorted(set(row["fecha"][:4] for row in conn.execute(
+    "SELECT DISTINCT fecha FROM iniciativas WHERE fecha LIKE '20%'").fetchall()))
     # Parámetros de búsqueda
     grupo = request.args.get("grupo", "")
     titulo = request.args.get("titulo", "")
