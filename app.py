@@ -16,11 +16,11 @@ def index():
 
     conn = get_db_connection()
 
-    grupos = [row[0] for row in conn.execute("SELECT DISTINCT grupo FROM iniciativas WHERE grupo IS NOT NULL ORDER BY grupo")]
+    grupos = ["VOX", "PP", "PSOE", "COMPROMIS", "PODEMOS"]
     resultados_opciones = [row[0] for row in conn.execute("SELECT DISTINCT resultado FROM iniciativas WHERE resultado IS NOT NULL ORDER BY resultado")]
     fechas = [row[0] for row in conn.execute("SELECT DISTINCT fecha FROM iniciativas WHERE fecha IS NOT NULL ORDER BY fecha DESC")]
 
-    query = "SELECT fecha, grupo, contenido, resultado, archivo_pdf FROM iniciativas WHERE 1=1"
+    query = "SELECT fecha, grupo, contenido, resultado FROM iniciativas WHERE 1=1"
     params = []
 
     if grupo:
