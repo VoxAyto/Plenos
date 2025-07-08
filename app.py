@@ -19,8 +19,8 @@ def index():
     resultado = request.args.get('resultado', '')
     fecha = request.args.get('fecha', '')
     concejal = request.args.get('concejal', '')
-se_ha_buscado = any([grupo, palabra_clave, resultado, fecha, concejal])
 
+ se_ha_buscado = any([grupo, palabra_clave, resultado, fecha, concejal])
     query = "SELECT fecha, grupo, contenido, resultado, concejal FROM iniciativas WHERE 1=1"
     params = []
 
