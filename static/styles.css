@@ -56,7 +56,12 @@ button:hover {
     background-color: #9a0007;
     transform: scale(1.03);
 }
-
+.bandera {
+    width: 100%;
+    max-height: 40px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    }
 .resultado {
     background-color: white;
     margin: 10px auto;
