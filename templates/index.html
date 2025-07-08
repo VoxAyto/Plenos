@@ -1,79 +1,74 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Buscador de Iniciativas del Pleno de Alicante</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Iniciativas</title>
+    <link rel="stylesheet" href="static/styles.css">
 </head>
 <body>
-    <header>
-        <h1>Buscador de Iniciativas del Pleno de Alicante <img src="https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg" alt="Bandera de España" class="bandera"></h1>
-    </header>
-    <main>
-        <form method="get">
-            <select name="grupo" id="grupo" onchange="toggleConcejal()">
-                <option value="">-- Grupo político --</option>
+    <div class="contenedor">
+        <h1>Buscador de Iniciativas del Pleno</h1>
+        <form method="get" class="formulario">
+            <select name="grupo">
+                <option value="">Todos los grupos</option>
                 {% for g in grupos %}
-                <option value="{{ g }}" {% if g == grupo %}selected{% endif %}>{{ g }}</option>
+                    <option value="{{ g }}" {% if grupo == g %}selected{% endif %}>{{ g }}</option>
                 {% endfor %}
-            </select>
+            </select><select name="concejal" id="concejal-select" style="display: none;">
+            {% for c in concejales %}
+                <option value="{{ c }}" {% if concejal == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
 
-            <input type="text" name="palabra_clave" placeholder="Palabra clave en el título" value="{{ palabra_clave }}">
+        <select name="resultado">
+            <option value="">Todos los resultados</option>
+            {% for r in resultados_filtro %}
+                <option value="{{ r }}" {% if resultado == r %}selected{% endif %}>{{ r }}</option>
+            {% endfor %}
+        </select>
 
-            <select name="resultado">
-                <option value="">-- Resultado --</option>
-                {% for r in resultados_filtro %}
-                <option value="{{ r }}" {% if r == resultado %}selected{% endif %}>{{ r }}</option>
-                {% endfor %}
-            </select>
+        <select name="fecha">
+            <option value="">Todas las fechas</option>
+            {% for f in fechas %}
+                <option value="{{ f }}" {% if fecha == f %}selected{% endif %}>{{ f }}</option>
+            {% endfor %}
+        </select>
 
-            <select name="fecha">
-                <option value="">-- Fecha del Pleno --</option>
-                {% for f in fechas %}
-                <option value="{{ f }}" {% if f == fecha %}selected{% endif %}>{{ f }}</option>
-                {% endfor %}
-            </select>
+        <input type="text" name="palabra_clave" placeholder="Buscar por palabra clave" value="{{ palabra_clave }}">
+        <button type="submit">Buscar</button>
+    </form>
 
-            <select name="concejal" id="concejal" style="display:none;">
-                {% for c in concejales %}
-                <option value="{{ c }}" {% if c == concejal %}selected{% endif %}>{{ c }}</option>
-                {% endfor %}
-            </select>
+    <div class="resultados">
+        {% if resultados %}
+            {% for row in resultados %}
+                <div class="tarjeta">
+                    <p><strong>Fecha:</strong> {{ row['fecha'] }}</p>
+                    <p><strong>Grupo:</strong> {{ row['grupo'] }}</p>
+                    <p><strong>Concejal:</strong> {{ row['concejal'] }}</p>
+                    <p><strong>Resultado:</strong> {{ row['resultado'] }}</p>
+                    <p><strong>Iniciativa:</strong> {{ row['contenido'] }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No se encontraron resultados.</p>
+        {% endif %}
+    </div>
+</div>
 
-            <button type="submit">Buscar</button>
-        </form>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Grupo</th>
-                    <th>Contenido</th>
-                    <th>Resultado</th>
-                    <th>Concejal</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for r in resultados %}
-                <tr>
-                    <td>{{ r["fecha"] }}</td>
-                    <td>{{ r["grupo"] }}</td>
-                    <td class="contenido">{{ r["contenido"] }}</td>
-                    <td>{{ r["resultado"] }}</td>
-                    <td>{{ r["concejal"] or '' }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </main>
-
-    <script>
-        function toggleConcejal() {
-            const grupo = document.getElementById("grupo").value;
-            const concejalSelect = document.getElementById("concejal");
-            concejalSelect.style.display = (grupo === "VOX") ? "inline-block" : "none";
+<script>
+    function toggleConcejal() {
+        var grupoSelect = document.querySelector('select[name="grupo"]');
+        var concejalSelect = document.getElementById('concejal-select');
+        if (grupoSelect.value === 'VOX') {
+            concejalSelect.style.display = 'inline-block';
+        } else {
+            concejalSelect.style.display = 'none';
+            concejalSelect.selectedIndex = 0;
         }
-        window.onload = toggleConcejal;
-    </script>
+    }
+    document.querySelector('select[name="grupo"]').addEventListener('change', toggleConcejal);
+    window.onload = toggleConcejal;
+</script>
+
 </body>
 </html>
