@@ -40,19 +40,22 @@
     </form>
 
     <div class="resultados">
-        {% if resultados %}
-            {% for row in resultados %}
-                <div class="tarjeta">
-                    <p><strong>Fecha:</strong> {{ row['fecha'] }}</p>
-                    <p><strong>Grupo:</strong> {{ row['grupo'] }}</p>
-                    <p><strong>Concejal:</strong> {{ row['concejal'] }}</p>
-                    <p><strong>Resultado:</strong> {{ row['resultado'] }}</p>
-                    <p><strong>Iniciativa:</strong> {{ row['contenido'] }}</p>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No se encontraron resultados.</p>
-        {% endif %}
+      {% if resultados %}
+  <div class="resultados">
+    {% for row in resultados %}
+      <p><strong>Fecha:</strong> {{ row["fecha"] }}</p>
+      <p><strong>Grupo:</strong> {{ row["grupo"] }}</p>
+      <p><strong>Concejal:</strong> {{ row["concejal"] or "" }}</p>
+      <p><strong>Resultado:</strong> {{ row["resultado"] }}</p>
+      <p><strong>Iniciativa:</strong> {{ row["contenido"] }}</p>
+      <hr>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="resultados">
+    <p>No se encontraron resultados.</p>
+  </div>
+{% endif %}
     </div>
 </div>
 
