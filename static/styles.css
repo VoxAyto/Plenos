@@ -56,14 +56,18 @@ button:hover {
     background-color: #9a0007;
     transform: scale(1.03);
 }
-.bandera-encabezado {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 120px;
-    object-fit: contain;
+.banderas-encabezado {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
     margin-bottom: 10px;
 }
+
+.bandera-encabezado {
+    height: 50px;
+}
+
 .resultado {
     background-color: white;
     margin: 10px auto;
