@@ -38,6 +38,7 @@
         <input type="text" name="palabra_clave" placeholder="Buscar por palabra clave" value="{{ palabra_clave }}">
         <button type="submit">Buscar</button>
     </form>
+<p class="contador-resultados">{{ total_resultados }} resultado(s) encontrado(s)</p>
 
     <div class="resultados">
       {% if resultados %}
