@@ -65,9 +65,10 @@ button:hover {
 }
 
 .bandera-img {
-    height: 40px;
+    height: 50px;
     width: auto;
-    object-fit: contain;
+    display: block;
+    margin: 0;
 }
 
 
