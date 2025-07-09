@@ -61,11 +61,11 @@ button:hover {
     justify-content: center;
     align-items: center;
     gap: 16px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .bandera-img {
-    height: 45px;
+    height: 40px;
     width: auto;
     object-fit: contain;
 }
