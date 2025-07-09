@@ -45,7 +45,8 @@ def index():
     return render_template('index.html', resultados=resultados_query, grupos=grupos,
                            resultados_filtro=resultados, fechas=fechas, grupo=grupo,
                            palabra_clave=palabra_clave, resultado=resultado, fecha=fecha,
-                           concejales=concejales_vox, concejal=concejal)
+                           concejales=concejales_vox, concejal=concejal,
+                           total_resultados=len(resultados_query))
 
 
 if __name__ == '__main__':
