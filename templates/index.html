@@ -43,14 +43,19 @@
     <div class="resultados">
       {% if resultados %}
   <div class="resultados">
-    {% for row in resultados %}
-      <p><strong>Fecha:</strong> {{ row["fecha"] }}</p>
-      <p><strong>Grupo:</strong> {{ row["grupo"] }}</p>
-      <p><strong>Concejal:</strong> {{ row["concejal"] or "" }}</p>
-      <p><strong>Resultado:</strong> {{ row["resultado"] }}</p>
-      <p><strong>Iniciativa:</strong> {{ row["contenido"] }}</p>
-      <hr>
-    {% endfor %}
+   {% for row in resultados %}
+  <p><strong>Fecha:</strong> {{ row["fecha"] }}</p>
+  <p><strong>Grupo:</strong> {{ row["grupo"] }}</p>
+  {% if row["grupo"] == "VOX" %}
+    <p><strong>Concejal:</strong> {{ row["concejal"] }}</p>
+  {% endif %}
+  <p><strong>Resultado:</strong> {{ row["resultado"] }}</p>
+  <p><strong>Iniciativa:</strong> {{ row["contenido"] }}</p>
+  {% if row["url_acta"] %}
+    <p><a href="{{ row["url_acta"] }}" target="_blank"><button>ACTA</button></a></p>
+  {% endif %}
+  <hr>
+{% endfor %}
   </div>
 {% else %}
   <div class="resultados">
