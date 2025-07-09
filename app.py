@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request
 import sqlite3
 
@@ -21,7 +20,7 @@ def index():
     concejal = request.args.get('concejal', '')
 
     se_ha_buscado = any([grupo, palabra_clave, resultado, fecha, concejal])
-   query = "SELECT fecha, grupo, contenido, resultado, concejal, url_acta FROM iniciativas WHERE 1=1"
+    query = "SELECT fecha, grupo, contenido, resultado, concejal, url_acta FROM iniciativas WHERE 1=1"
     params = []
 
     if grupo:
@@ -47,7 +46,6 @@ def index():
                            palabra_clave=palabra_clave, resultado=resultado, fecha=fecha,
                            concejales=concejales_vox, concejal=concejal,
                            total_resultados=len(resultados_query))
-
 
 if __name__ == '__main__':
     app.run(debug=True)
