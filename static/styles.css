@@ -60,12 +60,12 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
     margin-bottom: 10px;
 }
 
 .bandera-img {
-    height: 55px;
+    height: 45px;
     width: auto;
     object-fit: contain;
 }
